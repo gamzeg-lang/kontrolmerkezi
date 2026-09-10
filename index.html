@@ -1,0 +1,1221 @@
+<!DOCTYPE html>
+<html lang="tr" class="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Borsa AI - Otonom Portföy & İstihbarat Komuta Merkezi</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['"Plus Jakarta Sans"', 'sans-serif'],
+            mono: ['"JetBrains Mono"', 'monospace']
+          },
+          colors: {
+            brand: {
+              50: '#ecfdf5',
+              500: '#10b981',
+              600: '#059669',
+              dark: '#090d16',
+              card: '#0f172a',
+              border: '#1e293b',
+              accent: '#38bdf8'
+            }
+          }
+        }
+      }
+    }
+  </script>
+
+  <style>
+    body {
+      background-color: #070b14;
+      color: #f1f5f9;
+      font-family: 'Plus Jakarta Sans', sans-serif;
+    }
+    .custom-scrollbar::-webkit-scrollbar {
+      width: 6px;
+      height: 6px;
+    }
+    .custom-scrollbar::-webkit-scrollbar-track {
+      background: #0b1120;
+    }
+    .custom-scrollbar::-webkit-scrollbar-thumb {
+      background: #1e293b;
+      border-radius: 4px;
+    }
+    .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+      background: #334155;
+    }
+    .glass-panel {
+      background: rgba(15, 23, 42, 0.75);
+      backdrop-filter: blur(12px);
+      border: 1px solid rgba(255, 255, 255, 0.07);
+    }
+    .glass-card {
+      background: rgba(15, 23, 42, 0.55);
+      backdrop-filter: blur(8px);
+      border: 1px solid rgba(255, 255, 255, 0.05);
+    }
+    .pulse-green {
+      box-shadow: 0 0 15px rgba(16, 185, 129, 0.35);
+    }
+    .ticker-tape {
+      animation: ticker 28s linear infinite;
+    }
+    @keyframes ticker {
+      0% { transform: translate3d(0, 0, 0); }
+      100% { transform: translate3d(-50%, 0, 0); }
+    }
+  </style>
+</head>
+<body class="min-h-screen flex flex-col custom-scrollbar select-none">
+
+  <div class="w-full bg-[#0a0f1d] border-b border-slate-800/80 text-xs py-2 overflow-hidden flex items-center z-50">
+    <div class="px-3 flex items-center gap-2 font-bold text-emerald-400 bg-[#0a0f1d] z-10 shrink-0 border-r border-slate-800 pr-4">
+      <span class="inline-block w-2 h-2 rounded-full bg-emerald-500 animate-ping"></span>
+      <span>BIST CANLI</span>
+    </div>
+    <div class="overflow-hidden whitespace-nowrap flex w-full">
+      <div class="ticker-tape flex items-center gap-8 font-mono text-slate-300">
+        <span class="flex items-center gap-1.5 font-semibold"><b>BIST 100:</b> <span class="text-emerald-400">9,842.10 (+1.42%)</span></span>
+        <span class="flex items-center gap-1.5 font-semibold"><b>USD/TRY:</b> <span class="text-rose-400">34.12 (+0.08%)</span></span>
+        <span class="flex items-center gap-1.5 font-semibold"><b>GRAM ALTIN:</b> <span class="text-emerald-400">2,810 TL (+0.64%)</span></span>
+        <span class="flex items-center gap-1.5 font-semibold"><b>THYAO:</b> <span class="text-emerald-400">308.25 TL (+2.75%)</span></span>
+        <span class="flex items-center gap-1.5 font-semibold"><b>ASELS:</b> <span class="text-emerald-400">62.80 TL (+3.12%)</span></span>
+        <span class="flex items-center gap-1.5 font-semibold"><b>TUPRS:</b> <span class="text-rose-400">161.40 TL (-0.45%)</span></span>
+        <span class="flex items-center gap-1.5 font-semibold"><b>TTE (Teknoloji Fonu):</b> <span class="text-emerald-400">14.88 (+1.95%)</span></span>
+        <span class="flex items-center gap-1.5 font-semibold"><b>MAC (Hisse Senedi Fonu):</b> <span class="text-emerald-400">0.248 (+1.10%)</span></span>
+        <!-- Duplicated for seamless loop -->
+        <span class="flex items-center gap-1.5 font-semibold"><b>BIST 100:</b> <span class="text-emerald-400">9,842.10 (+1.42%)</span></span>
+        <span class="flex items-center gap-1.5 font-semibold"><b>USD/TRY:</b> <span class="text-rose-400">34.12 (+0.08%)</span></span>
+        <span class="flex items-center gap-1.5 font-semibold"><b>GRAM ALTIN:</b> <span class="text-emerald-400">2,810 TL (+0.64%)</span></span>
+        <span class="flex items-center gap-1.5 font-semibold"><b>THYAO:</b> <span class="text-emerald-400">308.25 TL (+2.75%)</span></span>
+        <span class="flex items-center gap-1.5 font-semibold"><b>ASELS:</b> <span class="text-emerald-400">62.80 TL (+3.12%)</span></span>
+        <span class="flex items-center gap-1.5 font-semibold"><b>TUPRS:</b> <span class="text-rose-400">161.40 TL (-0.45%)</span></span>
+      </div>
+    </div>
+  </div>
+
+  <header class="glass-panel sticky top-0 z-40 border-b border-slate-800/80 px-4 lg:px-8 py-3.5 flex flex-wrap items-center justify-between gap-4">
+    <div class="flex items-center gap-3">
+      <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-emerald-600 to-cyan-500 flex items-center justify-center shadow-lg shadow-emerald-500/20 text-white font-black text-xl">
+        <i class="fa-solid fa-brain"></i>
+      </div>
+      <div>
+        <div class="flex items-center gap-2">
+          <h1 class="font-bold text-lg text-white tracking-tight">KONTROL MERKEZİ</h1>
+          <span class="px-2 py-0.5 rounded-full text-[10px] font-bold tracking-wider bg-emerald-500/20 text-emerald-400 border border-emerald-500/30">AJAN AKTİF</span>
+        </div>
+        <p class="text-xs text-slate-400">BIST 100 & TEFAS Fonları Otonom Karar Portalı</p>
+      </div>
+    </div>
+
+    <!-- Center Control Buttons & Mode Toggles -->
+    <div class="flex items-center bg-slate-900/90 border border-slate-700/60 rounded-xl p-1 text-xs">
+      <button onclick="setSystemMode('hybrid')" id="btnModeHybrid" class="px-3 py-1.5 rounded-lg font-medium transition-all duration-200 bg-emerald-600 text-white shadow">
+        <i class="fa-solid fa-shield-halved mr-1"></i> Yarı-Otonom (Telegram Onaylı)
+      </button>
+      <button onclick="setSystemMode('autonomous')" id="btnModeAuto" class="px-3 py-1.5 rounded-lg font-medium transition-all duration-200 text-slate-400 hover:text-white">
+        <i class="fa-solid fa-bolt mr-1"></i> Tam Otonom (Otomatik Emir)
+      </button>
+      <button onclick="setSystemMode('simulation')" id="btnModeSim" class="px-3 py-1.5 rounded-lg font-medium transition-all duration-200 text-slate-400 hover:text-white">
+        <i class="fa-solid fa-vial mr-1"></i> Sanal İşlem (Paper)
+      </button>
+    </div>
+
+    <!-- Quick Actions Header -->
+    <div class="flex items-center gap-2.5">
+      <button onclick="triggerAIScan()" id="btnScanAI" class="flex items-center gap-2 bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white font-semibold text-xs px-4 py-2 rounded-xl shadow-lg shadow-emerald-700/25 transition-all">
+        <i class="fa-solid fa-wand-magic-sparkles animate-spin-slow"></i>
+        <span>AI Piyasa Taraması Başlat</span>
+      </button>
+      <button onclick="openAddAssetModal()" class="flex items-center gap-1.5 bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs px-3.5 py-2 rounded-xl border border-slate-700 transition">
+        <i class="fa-solid fa-plus text-emerald-400"></i>
+        <span>Takibe Ekle</span>
+      </button>
+      <button onclick="openSettingsModal()" class="w-9 h-9 flex items-center justify-center bg-slate-800/80 hover:bg-slate-700 rounded-xl border border-slate-700/80 text-slate-300">
+        <i class="fa-solid fa-gear"></i>
+      </button>
+    </div>
+  </header>
+
+  <main class="flex-1 p-4 lg:p-8 space-y-6 max-w-[1600px] w-full mx-auto">
+    
+    <!-- Top Summary Grid -->
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+      
+      <!-- Portfolio Value Card -->
+      <div class="glass-card rounded-2xl p-4 relative overflow-hidden border border-slate-800">
+        <div class="flex items-center justify-between text-slate-400 text-xs font-medium mb-1">
+          <span>Toplam Yönetilen Portföy</span>
+          <span class="p-1.5 rounded-lg bg-emerald-500/10 text-emerald-400"><i class="fa-solid fa-wallet"></i></span>
+        </div>
+        <div class="text-2xl font-bold font-mono text-white tracking-tight" id="lblTotalPortfolio">₺384,250.00</div>
+        <div class="flex items-center gap-2 mt-2 text-xs">
+          <span class="text-emerald-400 font-semibold flex items-center font-mono">
+            <i class="fa-solid fa-arrow-trend-up mr-1"></i>+₺12,430 (%3.34)
+          </span>
+          <span class="text-slate-500">Bugün</span>
+        </div>
+        <div class="absolute -right-6 -bottom-6 w-24 h-24 bg-emerald-500/5 rounded-full blur-xl pointer-events-none"></div>
+      </div>
+
+      <!-- AI Sentiment Indicator -->
+      <div class="glass-card rounded-2xl p-4 relative overflow-hidden border border-slate-800">
+        <div class="flex items-center justify-between text-slate-400 text-xs font-medium mb-1">
+          <span>BIST & Gündem Duyarlılığı (AI)</span>
+          <span class="p-1.5 rounded-lg bg-cyan-500/10 text-cyan-400"><i class="fa-solid fa-gauge-high"></i></span>
+        </div>
+        <div class="flex items-baseline gap-2">
+          <span class="text-2xl font-bold font-mono text-emerald-400" id="lblSentimentScore">+7.8 / 10</span>
+          <span class="text-xs font-semibold px-2 py-0.5 rounded bg-emerald-500/20 text-emerald-300">Güçlü Boğa</span>
+        </div>
+        <div class="w-full bg-slate-800 h-1.5 rounded-full mt-3 overflow-hidden">
+          <div class="bg-gradient-to-r from-emerald-500 to-cyan-400 h-full rounded-full" style="width: 78%"></div>
+        </div>
+      </div>
+
+      <!-- Pending Orders / Approvals -->
+      <div class="glass-card rounded-2xl p-4 relative overflow-hidden border border-slate-800">
+        <div class="flex items-center justify-between text-slate-400 text-xs font-medium mb-1">
+          <span>Bekleyen Telegram Onayları</span>
+          <span class="p-1.5 rounded-lg bg-amber-500/10 text-amber-400"><i class="fa-brands fa-telegram"></i></span>
+        </div>
+        <div class="flex items-baseline justify-between">
+          <div class="text-2xl font-bold font-mono text-amber-400" id="lblPendingCount">2 Sinyal</div>
+          <button onclick="openPendingApprovalModal()" class="text-xs text-slate-300 hover:text-white underline underline-offset-2">İncele</button>
+        </div>
+        <p class="text-xs text-slate-400 mt-2 truncate">THYAO (KAP Pozitif) & ASELS (EMA Kırılım)</p>
+      </div>
+
+      <!-- Risk Management Shield -->
+      <div class="glass-card rounded-2xl p-4 relative overflow-hidden border border-slate-800">
+        <div class="flex items-center justify-between text-slate-400 text-xs font-medium mb-1">
+          <span>Risk & Sermaye Koruması</span>
+          <span class="p-1.5 rounded-lg bg-indigo-500/10 text-indigo-400"><i class="fa-solid fa-shield-virus"></i></span>
+        </div>
+        <div class="flex items-baseline gap-2">
+          <span class="text-2xl font-bold font-mono text-white">Aktif Stop: %-2.5</span>
+        </div>
+        <div class="flex items-center justify-between text-xs text-slate-400 mt-2">
+          <span>Nakit Oranı: <b class="text-slate-200">%35</b></span>
+          <span>Max Çekilme: <b class="text-slate-200">%-1.2</b></span>
+        </div>
+      </div>
+    </div>
+
+    <div class="flex items-center gap-2 border-b border-slate-800 pb-2 overflow-x-auto text-sm">
+      <button onclick="switchTab('dashboard')" id="tab-dashboard" class="tab-btn flex items-center gap-2 px-4 py-2 font-semibold rounded-xl bg-slate-800 text-emerald-400 border border-slate-700/70">
+        <i class="fa-solid fa-chart-pie"></i>
+        <span>Canlı Portföy & Karar Matrisi</span>
+      </button>
+      <button onclick="switchTab('agents')" id="tab-agents" class="tab-btn flex items-center gap-2 px-4 py-2 font-medium rounded-xl text-slate-400 hover:text-slate-200 hover:bg-slate-800/50">
+        <i class="fa-solid fa-users-gear"></i>
+        <span>AI Ajan Konseyi (4 Ajan)</span>
+      </button>
+      <button onclick="switchTab('news')" id="tab-news" class="tab-btn flex items-center gap-2 px-4 py-2 font-medium rounded-xl text-slate-400 hover:text-slate-200 hover:bg-slate-800/50">
+        <i class="fa-solid fa-newspaper"></i>
+        <span>KAP & Gündem Duygu Analizi</span>
+      </button>
+      <button onclick="switchTab('orders')" id="tab-orders" class="tab-btn flex items-center gap-2 px-4 py-2 font-medium rounded-xl text-slate-400 hover:text-slate-200 hover:bg-slate-800/50">
+        <i class="fa-solid fa-receipt"></i>
+        <span>Al-Sat Emir Günlüğü</span>
+      </button>
+    </div>
+
+    <!-- TAB 1: MAIN DASHBOARD -->
+    <section id="view-dashboard" class="space-y-6">
+      
+      <!-- Center Grid: Interactive Chart & Multi-Agent Consensus Banner -->
+      <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        
+        <!-- Left: Interactive Portfolio Distribution & Performance -->
+        <div class="glass-card lg:col-span-2 rounded-2xl p-5 border border-slate-800 flex flex-col justify-between">
+          <div class="flex flex-wrap items-center justify-between gap-2 mb-4">
+            <div>
+              <h2 class="font-bold text-base text-white flex items-center gap-2">
+                <i class="fa-solid fa-chart-line text-emerald-400"></i>
+                Hisse & Fon Portföy Dağılımı ve Trendi
+              </h2>
+              <p class="text-xs text-slate-400">Haftalık ve aylık varlık ağırlıkları (Otomatik dengeleniyor)</p>
+            </div>
+            <div class="flex gap-2 text-xs font-medium">
+              <span class="px-2.5 py-1 rounded-lg bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 font-mono">BIST Hisseleri: %65</span>
+              <span class="px-2.5 py-1 rounded-lg bg-cyan-500/10 text-cyan-400 border border-cyan-500/20 font-mono">TEFAS Fonları: %35</span>
+            </div>
+          </div>
+
+          <div class="h-64 w-full relative">
+            <canvas id="portfolioTrendChart"></canvas>
+          </div>
+        </div>
+
+        <!-- Right: Real-time Multi-Agent Consensus Scoreboard -->
+        <div class="glass-card rounded-2xl p-5 border border-slate-800 flex flex-col justify-between">
+          <div class="flex items-center justify-between mb-3">
+            <h3 class="font-bold text-sm text-white flex items-center gap-2">
+              <i class="fa-solid fa-handshake-angle text-cyan-400"></i>
+              Ajan Mutabakat Masası
+            </h3>
+            <span class="text-[10px] font-mono text-slate-400">Son Güncelleme: 14:15</span>
+          </div>
+          <p class="text-xs text-slate-400 mb-4">4 Ajanın ortak kararı %75'in üzerine çıktığında emir iletimi tetiklenir.</p>
+
+          <!-- 4 Agents Bar List -->
+          <div class="space-y-3.5">
+            <div>
+              <div class="flex justify-between text-xs font-semibold mb-1">
+                <span class="flex items-center gap-1.5"><i class="fa-solid fa-chart-simple text-blue-400"></i> 1. Teknik Analist Ajanı</span>
+                <span class="text-emerald-400 font-mono">GÜÇLÜ AL (%88)</span>
+              </div>
+              <div class="w-full bg-slate-800 h-2 rounded-full overflow-hidden">
+                <div class="bg-emerald-500 h-full rounded-full" style="width: 88%"></div>
+              </div>
+              <span class="text-[10px] text-slate-500">Supertrend yeşil, 50-EMA 200-EMA'yı yukarı kesti.</span>
+            </div>
+
+            <div>
+              <div class="flex justify-between text-xs font-semibold mb-1">
+                <span class="flex items-center gap-1.5"><i class="fa-solid fa-file-invoice-dollar text-emerald-400"></i> 2. Temel Analiz Ajanı</span>
+                <span class="text-emerald-400 font-mono">AL (%74)</span>
+              </div>
+              <div class="w-full bg-slate-800 h-2 rounded-full overflow-hidden">
+                <div class="bg-emerald-400 h-full rounded-full" style="width: 74%"></div>
+              </div>
+              <span class="text-[10px] text-slate-500">F/K ve PD/DD sektör ortalamasının altında, FAVÖK marjı +%18 arttı.</span>
+            </div>
+
+            <div>
+              <div class="flex justify-between text-xs font-semibold mb-1">
+                <span class="flex items-center gap-1.5"><i class="fa-solid fa-globe text-cyan-400"></i> 3. Haber & KAP Ajanı</span>
+                <span class="text-emerald-400 font-mono">POZİTİF (%80)</span>
+              </div>
+              <div class="w-full bg-slate-800 h-2 rounded-full overflow-hidden">
+                <div class="bg-cyan-400 h-full rounded-full" style="width: 80%"></div>
+              </div>
+              <span class="text-[10px] text-slate-500">KAP yeni ihale bildirimi ve TCMB faiz kararı beklentisi pozitif.</span>
+            </div>
+
+            <div>
+              <div class="flex justify-between text-xs font-semibold mb-1">
+                <span class="flex items-center gap-1.5"><i class="fa-solid fa-shield-halved text-purple-400"></i> 4. Risk Masası Ajanı</span>
+                <span class="text-amber-400 font-mono">ONAYLANDI (Kısmi Risk)</span>
+              </div>
+              <div class="w-full bg-slate-800 h-2 rounded-full overflow-hidden">
+                <div class="bg-amber-400 h-full rounded-full" style="width: 65%"></div>
+              </div>
+              <span class="text-[10px] text-slate-500">Pozisyon büyüklüğü portföyün en fazla %15'i ile sınırlandırıldı.</span>
+            </div>
+          </div>
+
+          <div class="mt-4 pt-3 border-t border-slate-800 flex items-center justify-between">
+            <span class="text-xs font-bold text-white">Nihai Karar Konsensüsü:</span>
+            <span class="px-3 py-1 bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 rounded-lg text-xs font-black font-mono tracking-wide">
+              ALIM ONAYLANDI (%81)
+            </span>
+          </div>
+        </div>
+      </div>
+
+      <div class="glass-card rounded-2xl p-5 border border-slate-800">
+        <div class="flex flex-wrap items-center justify-between gap-4 mb-4">
+          <div>
+            <h3 class="font-bold text-base text-white flex items-center gap-2">
+              <i class="fa-solid fa-layer-group text-emerald-400"></i>
+              Aktif Takipteki Hisseler ve Yatırım Fonları
+            </h3>
+            <p class="text-xs text-slate-400">Yapay zeka robotunun taradığı ve pozisyon aldığı portföy bileşenleri</p>
+          </div>
+          <div class="flex items-center gap-2">
+            <span class="text-xs text-slate-400">Filtrele:</span>
+            <button onclick="filterAssetTable('all')" class="px-2.5 py-1 rounded-lg text-xs bg-slate-800 text-white font-medium">Tümü</button>
+            <button onclick="filterAssetTable('bist')" class="px-2.5 py-1 rounded-lg text-xs bg-slate-900 text-slate-400 hover:text-white font-medium">BIST Hisseleri</button>
+            <button onclick="filterAssetTable('fund')" class="px-2.5 py-1 rounded-lg text-xs bg-slate-900 text-slate-400 hover:text-white font-medium">TEFAS Fonları</button>
+          </div>
+        </div>
+
+        <div class="overflow-x-auto">
+          <table class="w-full text-left text-sm" id="assetsTable">
+            <thead class="text-xs uppercase bg-slate-900/80 text-slate-400 border-b border-slate-800 font-mono">
+              <tr>
+                <th class="py-3 px-4">Varlık</th>
+                <th class="py-3 px-4">Tür</th>
+                <th class="py-3 px-4">Alış / Güncel Fiyat</th>
+                <th class="py-3 px-4">Adet</th>
+                <th class="py-3 px-4">Kâr / Zarar</th>
+                <th class="py-3 px-4">AI Sinyal Puanı</th>
+                <th class="py-3 px-4">Son Karar</th>
+                <th class="py-3 px-4 text-right">Aksiyon</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-slate-800/60 font-sans" id="assetsTableBody">
+              <!-- Dynamically rendered -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- TAB 2: AGENTS COUNCIL -->
+    <section id="view-agents" class="hidden space-y-6">
+      <div class="glass-card rounded-2xl p-6 border border-slate-800">
+        <div class="max-w-3xl mb-6">
+          <h2 class="text-lg font-bold text-white flex items-center gap-2">
+            <i class="fa-solid fa-network-wired text-cyan-400"></i>
+            Çoklu Ajan (Multi-Agent) Karar Mimarisi
+          </h2>
+          <p class="text-xs text-slate-400 mt-1">
+            Arka planda çalışan 4 uzman ajan bağımsız analiz yapar. Birbirlerinin analizlerini eleştirip ortak bir uzlaşı puanı oluştururlar. Hiçbir ajan tek başına portföyü riske atamaz.
+          </p>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+          
+          <!-- Agent 1 Card -->
+          <div class="bg-slate-900/90 rounded-2xl p-4 border border-slate-800 flex flex-col justify-between">
+            <div>
+              <div class="w-10 h-10 rounded-xl bg-blue-500/10 text-blue-400 flex items-center justify-center text-lg mb-3">
+                <i class="fa-solid fa-chart-line"></i>
+              </div>
+              <h3 class="font-bold text-sm text-white">1. Teknik Analist Ajanı</h3>
+              <p class="text-[11px] text-slate-400 mt-1">TradingView & Python veri beslemesiyle indikatör tarar.</p>
+              
+              <div class="mt-4 space-y-2 text-xs">
+                <div class="flex justify-between py-1 border-b border-slate-800">
+                  <span class="text-slate-500">RSI(14):</span>
+                  <span class="text-slate-200 font-mono">58.4 (Nötr-Al)</span>
+                </div>
+                <div class="flex justify-between py-1 border-b border-slate-800">
+                  <span class="text-slate-500">Trend Göstergesi:</span>
+                  <span class="text-emerald-400 font-mono">Supertrend AL</span>
+                </div>
+                <div class="flex justify-between py-1 border-b border-slate-800">
+                  <span class="text-slate-500">Hareketli Ort.:</span>
+                  <span class="text-emerald-400 font-mono">EMA 20 > EMA 50</span>
+                </div>
+              </div>
+            </div>
+            <div class="mt-4 pt-3 border-t border-slate-800 text-[11px] text-emerald-400 font-semibold flex items-center justify-between">
+              <span>Ajan Tavsiyesi:</span>
+              <span class="bg-emerald-500/10 px-2 py-0.5 rounded">POZİSYON ARTIR</span>
+            </div>
+          </div>
+
+          <!-- Agent 2 Card -->
+          <div class="bg-slate-900/90 rounded-2xl p-4 border border-slate-800 flex flex-col justify-between">
+            <div>
+              <div class="w-10 h-10 rounded-xl bg-emerald-500/10 text-emerald-400 flex items-center justify-center text-lg mb-3">
+                <i class="fa-solid fa-calculator"></i>
+              </div>
+              <h3 class="font-bold text-sm text-white">2. Temel Analiz Ajanı</h3>
+              <p class="text-[11px] text-slate-400 mt-1">Fintables ve KAP bilançolarını rasyolarla değerlendirir.</p>
+              
+              <div class="mt-4 space-y-2 text-xs">
+                <div class="flex justify-between py-1 border-b border-slate-800">
+                  <span class="text-slate-500">F/K İskonto:</span>
+                  <span class="text-emerald-400 font-mono">%22 İskontolu</span>
+                </div>
+                <div class="flex justify-between py-1 border-b border-slate-800">
+                  <span class="text-slate-500">PD/DD Oranı:</span>
+                  <span class="text-slate-200 font-mono">1.82 (Sağlıklı)</span>
+                </div>
+                <div class="flex justify-between py-1 border-b border-slate-800">
+                  <span class="text-slate-500">Net Borç/FAVÖK:</span>
+                  <span class="text-emerald-400 font-mono">0.8x (Düşük Borç)</span>
+                </div>
+              </div>
+            </div>
+            <div class="mt-4 pt-3 border-t border-slate-800 text-[11px] text-emerald-400 font-semibold flex items-center justify-between">
+              <span>Ajan Tavsiyesi:</span>
+              <span class="bg-emerald-500/10 px-2 py-0.5 rounded">UZUN VADE UYGUN</span>
+            </div>
+          </div>
+
+          <!-- Agent 3 Card -->
+          <div class="bg-slate-900/90 rounded-2xl p-4 border border-slate-800 flex flex-col justify-between">
+            <div>
+              <div class="w-10 h-10 rounded-xl bg-cyan-500/10 text-cyan-400 flex items-center justify-center text-lg mb-3">
+                <i class="fa-solid fa-newspaper"></i>
+              </div>
+              <h3 class="font-bold text-sm text-white">3. Gündem & Duygu Ajanı</h3>
+              <p class="text-[11px] text-slate-400 mt-1">Ekonomi haberleri ve KAP açıklamalarını LLM ile puanlar.</p>
+              
+              <div class="mt-4 space-y-2 text-xs">
+                <div class="flex justify-between py-1 border-b border-slate-800">
+                  <span class="text-slate-500">Global Piyasalar:</span>
+                  <span class="text-emerald-400 font-mono">Pozitif (Fed/Faiz)</span>
+                </div>
+                <div class="flex justify-between py-1 border-b border-slate-800">
+                  <span class="text-slate-500">Sektör Algısı:</span>
+                  <span class="text-emerald-400 font-mono">Havacılık Boğa</span>
+                </div>
+                <div class="flex justify-between py-1 border-b border-slate-800">
+                  <span class="text-slate-500">Son 24s Haber Adedi:</span>
+                  <span class="text-slate-200 font-mono">42 Bülten Tarandı</span>
+                </div>
+              </div>
+            </div>
+            <div class="mt-4 pt-3 border-t border-slate-800 text-[11px] text-cyan-400 font-semibold flex items-center justify-between">
+              <span>Ajan Tavsiyesi:</span>
+              <span class="bg-cyan-500/10 px-2 py-0.5 rounded">RÜZGAR ARKADA</span>
+            </div>
+          </div>
+
+          <!-- Agent 4 Card -->
+          <div class="bg-slate-900/90 rounded-2xl p-4 border border-slate-800 flex flex-col justify-between">
+            <div>
+              <div class="w-10 h-10 rounded-xl bg-purple-500/10 text-purple-400 flex items-center justify-center text-lg mb-3">
+                <i class="fa-solid fa-lock"></i>
+              </div>
+              <h3 class="font-bold text-sm text-white">4. Risk & Veto Masası</h3>
+              <p class="text-[11px] text-slate-400 mt-1">Tüm emirleri denetler, portföy zararı aşarsa vetolar.</p>
+              
+              <div class="mt-4 space-y-2 text-xs">
+                <div class="flex justify-between py-1 border-b border-slate-800">
+                  <span class="text-slate-500">Zorunlu Stop-Loss:</span>
+                  <span class="text-rose-400 font-mono">%-2.50 Seviyesinde</span>
+                </div>
+                <div class="flex justify-between py-1 border-b border-slate-800">
+                  <span class="text-slate-500">Maks. Pozisyon:</span>
+                  <span class="text-slate-200 font-mono">%15 / Varlık</span>
+                </div>
+                <div class="flex justify-between py-1 border-b border-slate-800">
+                  <span class="text-slate-500">Acil Nakit Mandası:</span>
+                  <span class="text-emerald-400 font-mono">Aktif Değil (Güvenli)</span>
+                </div>
+              </div>
+            </div>
+            <div class="mt-4 pt-3 border-t border-slate-800 text-[11px] text-purple-400 font-semibold flex items-center justify-between">
+              <span>Ajan Tavsiyesi:</span>
+              <span class="bg-purple-500/10 px-2 py-0.5 rounded">ONAY VERİLDİ</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Live Agent Debate Simulation Log -->
+        <div class="mt-6 bg-slate-950/80 rounded-xl p-4 border border-slate-800/80 font-mono text-xs">
+          <div class="text-slate-400 mb-2 flex items-center justify-between border-b border-slate-800 pb-2">
+            <span class="flex items-center gap-2"><i class="fa-solid fa-terminal text-emerald-400"></i> Ajan İletişim Terminali (Gerçek Zamanlı)</span>
+            <span class="text-[10px] text-emerald-400 bg-emerald-950 px-2 py-0.5 rounded">DİNLENİYOR</span>
+          </div>
+          <div class="space-y-1.5 text-slate-300">
+            <p><span class="text-cyan-400">[14:12:04] [Haber Ajanı]:</span> THYAO için KAP'a yeni filo büyüme ve uçuş rekoru açıklaması düştü. Sentiment Puanı: +8.5.</p>
+            <p><span class="text-blue-400">[14:12:06] [Teknik Ajan]:</span> THYAO 305 TL direncini hacimli kırdı. RSI 62 bandında, alım için uygun.</p>
+            <p><span class="text-emerald-400">[14:12:08] [Temel Ajan]:</span> 3. Çeyrek beklenen FAVÖK artışı pozisyonu destekliyor.</p>
+            <p><span class="text-purple-400">[14:12:11] [Risk Masası]:</span> Konsensüs onaylandı (%84). Risk kuralı gereği portföyün %8'i (₺30,800) ile kademeli AL önerisi oluşturuldu. Telegram onayına gönderildi.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- TAB 3: NEWS & KAP FEED -->
+    <section id="view-news" class="hidden space-y-6">
+      <div class="glass-card rounded-2xl p-6 border border-slate-800">
+        <div class="flex flex-wrap items-center justify-between gap-4 mb-6">
+          <div>
+            <h2 class="text-lg font-bold text-white flex items-center gap-2">
+              <i class="fa-solid fa-rss text-cyan-400"></i>
+              Canlı KAP & Türkiye/Dünya Gündemi Analiz Akışı
+            </h2>
+            <p class="text-xs text-slate-400">Yapay Zekanın okuyup puanladığı ve hisselere etkisini çıkardığı haber akışı</p>
+          </div>
+          <div class="flex items-center gap-2">
+            <span class="text-xs text-slate-400">AI Filtresi:</span>
+            <select id="newsSentimentFilter" onchange="filterNewsFeed()" class="bg-slate-900 border border-slate-700 text-xs rounded-lg px-3 py-1.5 text-white">
+              <option value="all">Tüm Haberler</option>
+              <option value="positive">Yalnızca Pozitif (+5 ve üstü)</option>
+              <option value="negative">Yalnızca Negatif / Riskli</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="space-y-3" id="newsFeedContainer">
+          <!-- Dynamically populated -->
+        </div>
+      </div>
+    </section>
+
+    <!-- TAB 4: ORDERS LOG -->
+    <section id="view-orders" class="hidden space-y-6">
+      <div class="glass-card rounded-2xl p-6 border border-slate-800">
+        <div class="flex flex-wrap items-center justify-between gap-4 mb-6">
+          <div>
+            <h2 class="text-lg font-bold text-white flex items-center gap-2">
+              <i class="fa-solid fa-list-check text-emerald-400"></i>
+              Otonom Alım-Satım Günlüğü ve Aracı Kurum İletimleri
+            </h2>
+            <p class="text-xs text-slate-400">Sistem tarafından gerçekleştirilen veya onaya sunulan emirlerin tarihçesi</p>
+          </div>
+          <button onclick="exportOrdersCSV()" class="bg-slate-800 hover:bg-slate-700 text-xs text-slate-200 px-3.5 py-1.5 rounded-xl border border-slate-700 flex items-center gap-1.5 transition">
+            <i class="fa-solid fa-download text-emerald-400"></i>
+            <span>Dışa Aktar (CSV)</span>
+          </button>
+        </div>
+
+        <div class="overflow-x-auto">
+          <table class="w-full text-left text-sm" id="ordersTable">
+            <thead class="text-xs uppercase bg-slate-900/80 text-slate-400 border-b border-slate-800 font-mono">
+              <tr>
+                <th class="py-3 px-4">Tarih / Saat</th>
+                <th class="py-3 px-4">Varlık</th>
+                <th class="py-3 px-4">İşlem</th>
+                <th class="py-3 px-4">Fiyat</th>
+                <th class="py-3 px-4">Tutar</th>
+                <th class="py-3 px-4">Ajan Gerekçesi</th>
+                <th class="py-3 px-4">Durum</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-slate-800/60 font-sans" id="ordersTableBody">
+              <!-- Dynamically populated -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <div id="addAssetModal" class="fixed inset-0 bg-black/70 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
+    <div class="glass-panel w-full max-w-md rounded-2xl p-6 border border-slate-700 shadow-2xl relative">
+      <button onclick="closeAddAssetModal()" class="absolute top-4 right-4 text-slate-400 hover:text-white">
+        <i class="fa-solid fa-xmark text-lg"></i>
+      </button>
+      <h3 class="font-bold text-lg text-white mb-1 flex items-center gap-2">
+        <i class="fa-solid fa-plus-circle text-emerald-400"></i>
+        Yeni Varlık Takibi Ekle
+      </h3>
+      <p class="text-xs text-slate-400 mb-4">Sistemin analiz etmesini ve işlem yapmasını istediğiniz hisse veya fonu tanımlayın.</p>
+
+      <div class="space-y-4 text-xs">
+        <div>
+          <label class="block text-slate-300 font-semibold mb-1">Varlık Sembolü (Örn: THYAO, ASELS, TTE, MAC)</label>
+          <input id="inputAssetSymbol" type="text" placeholder="BIST Kodu veya Fon Kodu" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-3.5 py-2.5 text-white font-mono uppercase focus:outline-none focus:border-emerald-500">
+        </div>
+        <div>
+          <label class="block text-slate-300 font-semibold mb-1">Varlık Türü</label>
+          <select id="inputAssetType" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-3.5 py-2.5 text-white focus:outline-none focus:border-emerald-500">
+            <option value="bist">BIST 100 Hisse Senedi</option>
+            <option value="fund">TEFAS Yatırım Fonu</option>
+          </select>
+        </div>
+        <div class="grid grid-cols-2 gap-3">
+          <div>
+            <label class="block text-slate-300 font-semibold mb-1">Mevcut Adet (Opsiyonel)</label>
+            <input id="inputAssetQty" type="number" placeholder="Örn: 100" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-3 py-2 text-white font-mono focus:outline-none focus:border-emerald-500">
+          </div>
+          <div>
+            <label class="block text-slate-300 font-semibold mb-1">Maliyet Fiyatı (TL)</label>
+            <input id="inputAssetPrice" type="number" placeholder="Örn: 285.50" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-3 py-2 text-white font-mono focus:outline-none focus:border-emerald-500">
+          </div>
+        </div>
+        <div>
+          <label class="block text-slate-300 font-semibold mb-1">Takip Periyodu</label>
+          <select id="inputAssetPeriod" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-3 py-2 text-white focus:outline-none focus:border-emerald-500">
+            <option value="all">Günlük + Haftalık + Aylık (Hibrit)</option>
+            <option value="daily">Günlük (Kısa Vade)</option>
+            <option value="monthly">Aylık (Uzun Vadeli Portföy Dengeleme)</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="mt-6 flex justify-end gap-2">
+        <button onclick="closeAddAssetModal()" class="px-4 py-2 rounded-xl text-slate-400 hover:text-white text-xs font-medium">Vazgeç</button>
+        <button onclick="saveNewAsset()" class="px-5 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-semibold text-xs transition">Takibe Başla</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="pendingApprovalModal" class="fixed inset-0 bg-black/70 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
+    <div class="glass-panel w-full max-w-lg rounded-2xl p-6 border border-slate-700 shadow-2xl relative">
+      <button onclick="closePendingApprovalModal()" class="absolute top-4 right-4 text-slate-400 hover:text-white">
+        <i class="fa-solid fa-xmark text-lg"></i>
+      </button>
+      <div class="flex items-center gap-3 mb-3">
+        <div class="w-10 h-10 rounded-xl bg-amber-500/20 text-amber-400 flex items-center justify-center text-lg">
+          <i class="fa-brands fa-telegram"></i>
+        </div>
+        <div>
+          <h3 class="font-bold text-base text-white">Yarı-Otonom Telegram Onay Masası</h3>
+          <p class="text-xs text-slate-400">Yapay zeka analizini tamamladı, emri iletmek için onayınızı bekliyor.</p>
+        </div>
+      </div>
+
+      <div class="space-y-3 mt-4" id="pendingApprovalsList">
+        <!-- Injected dynamically -->
+      </div>
+
+      <div class="mt-5 pt-3 border-t border-slate-800 flex items-center justify-between text-xs text-slate-400">
+        <span>Mobil Telegram Botu: <b class="text-emerald-400 font-mono">@BorsaAI_EmirBot</b></span>
+        <button onclick="closePendingApprovalModal()" class="px-3 py-1.5 rounded-lg bg-slate-800 text-slate-300 hover:text-white">Kapat</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="settingsModal" class="fixed inset-0 bg-black/70 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
+    <div class="glass-panel w-full max-w-lg rounded-2xl p-6 border border-slate-700 shadow-2xl relative max-h-[90vh] overflow-y-auto custom-scrollbar">
+      <button onclick="closeSettingsModal()" class="absolute top-4 right-4 text-slate-400 hover:text-white">
+        <i class="fa-solid fa-xmark text-lg"></i>
+      </button>
+      <h3 class="font-bold text-lg text-white mb-1 flex items-center gap-2">
+        <i class="fa-solid fa-sliders text-cyan-400"></i>
+        Sistem & Entegrasyon Ayarları
+      </h3>
+      <p class="text-xs text-slate-400 mb-5">Google Sheets'e girmeden arka plan otomasyonlarını ve aracı kurum köprüsünü yapılandırın.</p>
+
+      <div class="space-y-4 text-xs">
+        <div class="bg-slate-900/80 p-3.5 rounded-xl border border-slate-800">
+          <h4 class="font-bold text-slate-200 mb-2 flex items-center gap-2">
+            <i class="fa-brands fa-google text-emerald-400"></i>
+            Google Sheets Arka Plan Senkronizasyonu
+          </h4>
+          <p class="text-slate-400 text-[11px] mb-2">Tüm işlemler siz sayfada olmasanız bile Sheets'inize otomatik yedeklenir.</p>
+          <div class="flex gap-2">
+            <input type="text" readonly value="https://script.google.com/macros/s/AKfycby.../exec" class="w-full bg-slate-950 border border-slate-800 rounded-lg px-2.5 py-1.5 text-slate-400 font-mono text-[11px]">
+            <button onclick="showToast('Google Sheets bağlantısı aktif ve doğrulanmış!')" class="px-3 py-1.5 bg-slate-800 hover:bg-slate-700 text-slate-200 rounded-lg whitespace-nowrap">Test Et</button>
+          </div>
+        </div>
+
+        <div class="bg-slate-900/80 p-3.5 rounded-xl border border-slate-800">
+          <h4 class="font-bold text-slate-200 mb-2 flex items-center gap-2">
+            <i class="fa-solid fa-building-columns text-cyan-400"></i>
+            BIST Aracı Kurum / API Entegrasyonu
+          </h4>
+          <p class="text-slate-400 text-[11px] mb-2">Otomatik emirlerin gideceği altyapıyı seçin.</p>
+          <select class="w-full bg-slate-950 border border-slate-700 rounded-lg px-2.5 py-2 text-white">
+            <option>DenizBank - AlgoLab API (Önerilen - No Code)</option>
+            <option>Matriks IQ / iDeal Veri Köprüsü</option>
+            <option>Info Yatırım / Gedik Algo Portalı</option>
+            <option>Sanal Simülasyon (Gerçek Emir Gönderilmez)</option>
+          </select>
+        </div>
+
+        <div class="bg-slate-900/80 p-3.5 rounded-xl border border-slate-800">
+          <h4 class="font-bold text-slate-200 mb-2 flex items-center gap-2">
+            <i class="fa-solid fa-shield-halved text-rose-400"></i>
+            Otomatik Risk Limitleri
+          </h4>
+          <div class="grid grid-cols-2 gap-3">
+            <div>
+              <label class="block text-slate-400 text-[10px] mb-1">Maksimum Zarar Kes (Stop Loss)</label>
+              <input type="text" value="%-2.50" class="w-full bg-slate-950 border border-slate-800 rounded-lg px-2.5 py-1.5 text-white font-mono">
+            </div>
+            <div>
+              <label class="block text-slate-400 text-[10px] mb-1">Kâr Al Seviyesi (Take Profit)</label>
+              <input type="text" value="%+7.00" class="w-full bg-slate-950 border border-slate-800 rounded-lg px-2.5 py-1.5 text-white font-mono">
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="mt-5 flex justify-end">
+        <button onclick="closeSettingsModal(); showToast('Ayarlar başarıyla kaydedildi.');" class="px-5 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-semibold text-xs transition">Kaydet</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="toastContainer" class="fixed bottom-5 right-5 z-50 flex flex-col gap-2 pointer-events-none"></div>
+
+  <script>
+    /* Global In-Memory Database & State */
+    let systemMode = 'hybrid'; // hybrid, autonomous, simulation
+    
+    // Sample Assets: BIST Stocks and Investment Funds
+    let assets = [
+      { id: 1, symbol: 'THYAO', name: 'Türk Hava Yolları', type: 'bist', buyPrice: 285.00, currentPrice: 308.25, qty: 150, aiScore: 8.8, decision: 'AL', reason: 'KAP yolcu rekoru ve 50-EMA kırılımı' },
+      { id: 2, symbol: 'ASELS', name: 'Aselsan Elektronik', type: 'bist', buyPrice: 58.40, currentPrice: 62.80, qty: 600, aiScore: 8.2, decision: 'TUT', reason: 'Savunma sanayii yeni ihale mutabakatı' },
+      { id: 3, symbol: 'TUPRS', name: 'Tüpraş Rafinerileri', type: 'bist', buyPrice: 165.00, currentPrice: 161.40, qty: 250, aiScore: 4.5, decision: 'DİKKAT', reason: 'Brent petrol zayıflığı ve kâr marjı daralması' },
+      { id: 4, symbol: 'TTE', name: 'İş Portföy Teknoloji Ağırlıklı Fon', type: 'fund', buyPrice: 13.50, currentPrice: 14.88, qty: 4500, aiScore: 7.9, decision: 'KADEMELİ AL', reason: 'Global yapay zeka çip şirketleri pozitif rüzgarı' },
+      { id: 5, symbol: 'MAC', name: 'Marmara Capital Hisse Fonu', type: 'fund', buyPrice: 0.230, currentPrice: 0.248, qty: 180000, aiScore: 7.6, decision: 'TUT', reason: 'Yüksek temettü verimi ve dengeli BIST 30 sepeti' },
+      { id: 6, symbol: 'KCHOL', name: 'Koç Holding', type: 'bist', buyPrice: 215.00, currentPrice: 228.60, qty: 100, aiScore: 7.3, decision: 'TUT', reason: 'Holding iştirak gelirleri istikrarlı' }
+    ];
+
+    // Sample AI News & Sentiment Feed
+    let newsItems = [
+      {
+        id: 1,
+        time: '14:05',
+        source: 'KAP / Şirket Bildirimi',
+        title: 'THYAO Yeni Uçak Alımı ve Filo Genişleme Planını Duyurdu',
+        summary: 'Yönetim kurulu, 2026-2028 teslimatlı ilave geniş gövde uçak siparişi için görüşmelerin tamamlandığını bildirdi.',
+        score: +8.8,
+        sentiment: 'positive',
+        affected: 'THYAO'
+      },
+      {
+        id: 2,
+        time: '13:20',
+        source: 'Bloomberg HT',
+        title: 'TCMB Enflasyon Raporu ve Sıkı Duruş Mesajı Piyasada Karşılık Buldu',
+        summary: 'Merkez Bankası politika faizinde dezenflasyon sürecinin korunduğunu, TL varlıklara yabancı girişinin arttığını belirtti.',
+        score: +7.2,
+        sentiment: 'positive',
+        affected: 'BIST 100 / BANKA'
+      },
+      {
+        id: 3,
+        time: '11:45',
+        source: 'KAP / Aselsan',
+        title: 'ASELS 84 Milyon Dolarlık Uluslararası İhracat Sözleşmesi İmzaladı',
+        summary: 'Savunma elektroniği ve elektro-optik sistemlerin tedariki için dost ülke ile nihai satış sözleşmesi bağlandı.',
+        score: +9.1,
+        sentiment: 'positive',
+        affected: 'ASELS'
+      },
+      {
+        id: 4,
+        time: '09:30',
+        source: 'Reuters / Enerji',
+        title: 'Küresel Brent Petrol Fiyatlarında %2.1 Düşüş',
+        summary: 'Çin sanayi talebindeki yavaşlama endişeleriyle rafinaj marjlarında kısa vadeli baskı oluştu.',
+        score: -3.4,
+        sentiment: 'negative',
+        affected: 'TUPRS'
+      }
+    ];
+
+    // Orders History
+    let ordersLog = [
+      { date: 'Bugün 13:50', symbol: 'THYAO', type: 'AL', price: '₺306.50', total: '₺30,650', reason: 'KAP Sentiment (+8.8) & 50-EMA Kırılım', status: 'Gerçekleşti' },
+      { date: 'Bugün 11:15', symbol: 'ASELS', type: 'AL', price: '₺61.90', total: '₺18,570', reason: 'İhracat Haberi + RSI 58 Onayı', status: 'Gerçekleşti' },
+      { date: 'Dün 16:30', symbol: 'EREGL', type: 'SAT', price: '₺52.10', total: '₺26,050', reason: 'Stop Loss Tetiklendi (Risk Masası Vetosu)', status: 'Gerçekleşti' },
+      { date: 'Dün 10:00', symbol: 'TTE', type: 'AL', price: '₺14.40', total: '₺14,400', reason: 'Haftalık Portföy Dengeleme (Fon Rotasyonu)', status: 'Gerçekleşti' }
+    ];
+
+    // Pending Approvals for Telegram / Semi-Auto
+    let pendingApprovals = [
+      { id: 'appr1', symbol: 'THYAO', action: 'KADEMELİ AL', qty: 50, price: '₺308.00', score: 8.8, reason: 'KAP haberi güçlü pozitif, direnç kırıldı. Konsensüs: %84.' },
+      { id: 'appr2', symbol: 'TTE', action: 'PORTFÖY DENGELEME (AL)', qty: 1000, price: '₺14.85', score: 7.9, reason: 'Aylık fon sepeti ağırlık eşitlemesi.' }
+    ];
+
+    function renderAssets(filter = 'all') {
+      const tbody = document.getElementById('assetsTableBody');
+      tbody.innerHTML = '';
+
+      const filtered = assets.filter(item => {
+        if (filter === 'all') return true;
+        return item.type === filter;
+      });
+
+      filtered.forEach(item => {
+        const totalCost = item.buyPrice * item.qty;
+        const currentTotal = item.currentPrice * item.qty;
+        const pnl = currentTotal - totalCost;
+        const pnlPct = ((item.currentPrice - item.buyPrice) / item.buyPrice) * 100;
+        const isProfit = pnl >= 0;
+
+        let badgeClass = 'bg-emerald-500/20 text-emerald-300 border border-emerald-500/30';
+        if (item.decision === 'DİKKAT') badgeClass = 'bg-rose-500/20 text-rose-300 border border-rose-500/30';
+        if (item.decision === 'TUT') badgeClass = 'bg-cyan-500/20 text-cyan-300 border border-cyan-500/30';
+
+        const tr = document.createElement('tr');
+        tr.className = 'hover:bg-slate-800/40 transition duration-150';
+        tr.innerHTML = `
+          <td class="py-3.5 px-4">
+            <div class="font-bold text-white font-mono flex items-center gap-1.5">
+              <span>${item.symbol}</span>
+              ${item.type === 'fund' ? '<span class="text-[10px] bg-cyan-900/60 text-cyan-300 px-1.5 rounded">TEFAS</span>' : ''}
+            </div>
+            <div class="text-[11px] text-slate-400">${item.name}</div>
+          </td>
+          <td class="py-3.5 px-4 text-xs text-slate-300 capitalize">${item.type === 'bist' ? 'Hisse Senedi' : 'Yatırım Fonu'}</td>
+          <td class="py-3.5 px-4 font-mono text-xs">
+            <div class="text-slate-400">Alış: ₺${item.buyPrice.toFixed(2)}</div>
+            <div class="text-white font-bold">₺${item.currentPrice.toFixed(2)}</div>
+          </td>
+          <td class="py-3.5 px-4 font-mono text-xs text-slate-200">${item.qty.toLocaleString()} Adet</td>
+          <td class="py-3.5 px-4 font-mono text-xs">
+            <div class="${isProfit ? 'text-emerald-400' : 'text-rose-400'} font-bold">
+              ${isProfit ? '+' : ''}₺${pnl.toFixed(2)}
+            </div>
+            <div class="${isProfit ? 'text-emerald-400' : 'text-rose-400'} text-[11px]">
+              (${isProfit ? '+' : ''}${pnlPct.toFixed(2)}%)
+            </div>
+          </td>
+          <td class="py-3.5 px-4 font-mono text-xs">
+            <div class="flex items-center gap-1.5">
+              <span class="font-bold ${item.aiScore >= 7 ? 'text-emerald-400' : item.aiScore >= 5 ? 'text-amber-400' : 'text-rose-400'}">${item.aiScore} / 10</span>
+            </div>
+          </td>
+          <td class="py-3.5 px-4">
+            <span class="px-2.5 py-1 rounded-lg text-xs font-bold ${badgeClass}">
+              ${item.decision}
+            </span>
+            <div class="text-[10px] text-slate-500 mt-1 max-w-[140px] truncate" title="${item.reason}">${item.reason}</div>
+          </td>
+          <td class="py-3.5 px-4 text-right">
+            <button onclick="triggerQuickTrade('${item.symbol}')" class="px-2.5 py-1 bg-slate-800 hover:bg-slate-700 text-slate-200 hover:text-white rounded-lg text-xs border border-slate-700 transition">
+              Analiz Et
+            </button>
+          </td>
+        `;
+        tbody.appendChild(tr);
+      });
+
+      calculateTotalPortfolio();
+    }
+
+    function calculateTotalPortfolio() {
+      let total = assets.reduce((sum, item) => sum + (item.currentPrice * item.qty), 0);
+      document.getElementById('lblTotalPortfolio').textContent = '₺' + total.toLocaleString('tr-TR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+    }
+
+    function renderNewsFeed() {
+      const container = document.getElementById('newsFeedContainer');
+      container.innerHTML = '';
+
+      newsItems.forEach(item => {
+        const isPos = item.score > 0;
+        const card = document.createElement('div');
+        card.className = 'p-4 rounded-xl bg-slate-900/70 border border-slate-800 hover:border-slate-700 transition flex flex-col sm:flex-row sm:items-center justify-between gap-3';
+        card.innerHTML = `
+          <div class="space-y-1">
+            <div class="flex items-center gap-2 text-xs">
+              <span class="font-mono text-slate-500">${item.time}</span>
+              <span class="px-2 py-0.5 rounded bg-slate-800 text-cyan-300 font-medium">${item.source}</span>
+              <span class="font-bold text-white font-mono bg-slate-800/80 px-2 py-0.5 rounded">${item.affected}</span>
+            </div>
+            <h4 class="font-semibold text-sm text-slate-100">${item.title}</h4>
+            <p class="text-xs text-slate-400">${item.summary}</p>
+          </div>
+          <div class="flex sm:flex-col items-end justify-between sm:justify-center shrink-0 border-t sm:border-t-0 pt-2 sm:pt-0 border-slate-800">
+            <div class="flex items-center gap-1.5 font-mono text-sm font-bold ${isPos ? 'text-emerald-400' : 'text-rose-400'}">
+              <i class="fa-solid ${isPos ? 'fa-arrow-trend-up' : 'fa-arrow-trend-down'}"></i>
+              <span>${isPos ? '+' : ''}${item.score} AI</span>
+            </div>
+            <span class="text-[10px] uppercase font-bold text-slate-500">${isPos ? 'YÜKSELİŞ BEKLENTİSİ' : 'RİSKLİ / AYI'}</span>
+          </div>
+        `;
+        container.appendChild(card);
+      });
+    }
+
+    function renderOrders() {
+      const tbody = document.getElementById('ordersTableBody');
+      tbody.innerHTML = '';
+
+      ordersLog.forEach(order => {
+        const isBuy = order.type === 'AL';
+        const tr = document.createElement('tr');
+        tr.className = 'hover:bg-slate-800/30 transition';
+        tr.innerHTML = `
+          <td class="py-3 px-4 font-mono text-xs text-slate-400">${order.date}</td>
+          <td class="py-3 px-4 font-bold font-mono text-xs text-white">${order.symbol}</td>
+          <td class="py-3 px-4">
+            <span class="px-2 py-0.5 rounded text-xs font-bold font-mono ${isBuy ? 'bg-emerald-500/20 text-emerald-400 border border-emerald-500/30' : 'bg-rose-500/20 text-rose-400 border border-rose-500/30'}">
+              ${order.type}
+            </span>
+          </td>
+          <td class="py-3 px-4 font-mono text-xs text-slate-200">${order.price}</td>
+          <td class="py-3 px-4 font-mono text-xs text-slate-200">${order.total}</td>
+          <td class="py-3 px-4 text-xs text-slate-400 max-w-xs truncate">${order.reason}</td>
+          <td class="py-3 px-4">
+            <span class="text-xs text-emerald-400 flex items-center gap-1">
+              <i class="fa-solid fa-circle-check"></i> ${order.status}
+            </span>
+          </td>
+        `;
+        tbody.appendChild(tr);
+      });
+    }
+
+    function renderPendingApprovals() {
+      const list = document.getElementById('pendingApprovalsList');
+      list.innerHTML = '';
+
+      if (pendingApprovals.length === 0) {
+        list.innerHTML = `
+          <div class="text-center py-6 text-slate-500 text-xs">
+            <i class="fa-solid fa-check-double text-2xl text-emerald-500/50 mb-2"></i>
+            <p>Bekleyen Telegram onayı bulunmuyor. Tüm emirler güncel.</p>
+          </div>
+        `;
+        document.getElementById('lblPendingCount').textContent = '0 Sinyal';
+        return;
+      }
+
+      document.getElementById('lblPendingCount').textContent = `${pendingApprovals.length} Sinyal`;
+
+      pendingApprovals.forEach(appr => {
+        const div = document.createElement('div');
+        div.className = 'p-3.5 rounded-xl bg-slate-900 border border-slate-800 space-y-2';
+        div.innerHTML = `
+          <div class="flex items-center justify-between">
+            <div class="flex items-center gap-2">
+              <span class="font-bold text-white font-mono text-sm">${appr.symbol}</span>
+              <span class="px-2 py-0.5 rounded bg-emerald-500/20 text-emerald-400 text-xs font-bold font-mono">${appr.action}</span>
+            </div>
+            <span class="text-xs text-emerald-400 font-mono font-bold">+${appr.score} AI Puanı</span>
+          </div>
+          <p class="text-xs text-slate-400">${appr.reason}</p>
+          <div class="flex items-center justify-between pt-2 border-t border-slate-800/80 text-xs">
+            <span class="font-mono text-slate-300">${appr.qty} Adet @ ${appr.price}</span>
+            <div class="flex gap-2">
+              <button onclick="approveTrade('${appr.id}', false)" class="px-3 py-1 rounded-lg bg-rose-500/20 text-rose-300 hover:bg-rose-500/30 font-medium">Reddet</button>
+              <button onclick="approveTrade('${appr.id}', true)" class="px-3.5 py-1 rounded-lg bg-emerald-600 hover:bg-emerald-500 text-white font-bold">Onayla & Gönder</button>
+            </div>
+          </div>
+        `;
+        list.appendChild(div);
+      });
+    }
+
+    function approveTrade(id, isApproved) {
+      const idx = pendingApprovals.findIndex(a => a.id === id);
+      if (idx !== -1) {
+        const item = pendingApprovals[idx];
+        if (isApproved) {
+          ordersLog.unshift({
+            date: 'Az Önce',
+            symbol: item.symbol,
+            type: 'AL',
+            price: item.price,
+            total: '₺' + (parseFloat(item.price.replace('₺', '')) * item.qty).toFixed(2),
+            reason: item.reason,
+            status: 'Aracı Kuruma İletildi'
+          });
+          renderOrders();
+          showToast(`${item.symbol} emri onaylandı ve aracı kuruma iletildi!`);
+        } else {
+          showToast(`${item.symbol} emri iptal edildi.`);
+        }
+        pendingApprovals.splice(idx, 1);
+        renderPendingApprovals();
+      }
+    }
+
+    function switchTab(tabName) {
+      const views = ['dashboard', 'agents', 'news', 'orders'];
+      views.forEach(v => {
+        document.getElementById(`view-${v}`).classList.add('hidden');
+        const btn = document.getElementById(`tab-${v}`);
+        btn.classList.remove('bg-slate-800', 'text-emerald-400', 'border', 'border-slate-700/70');
+        btn.classList.add('text-slate-400');
+      });
+
+      document.getElementById(`view-${tabName}`).classList.remove('hidden');
+      const activeBtn = document.getElementById(`tab-${tabName}`);
+      activeBtn.classList.add('bg-slate-800', 'text-emerald-400', 'border', 'border-slate-700/70');
+      activeBtn.classList.remove('text-slate-400');
+    }
+
+    function setSystemMode(mode) {
+      systemMode = mode;
+      const modes = ['Hybrid', 'Auto', 'Sim'];
+      modes.forEach(m => {
+        const btn = document.getElementById(`btnMode${m}`);
+        btn.className = 'px-3 py-1.5 rounded-lg font-medium transition-all duration-200 text-slate-400 hover:text-white';
+      });
+
+      if (mode === 'hybrid') {
+        document.getElementById('btnModeHybrid').className = 'px-3 py-1.5 rounded-lg font-medium transition-all duration-200 bg-emerald-600 text-white shadow';
+        showToast('Mod Değiştirildi: Yarı-Otonom (Telegram Onaylı)');
+      } else if (mode === 'autonomous') {
+        document.getElementById('btnModeAuto').className = 'px-3 py-1.5 rounded-lg font-medium transition-all duration-200 bg-cyan-600 text-white shadow';
+        showToast('DİKKAT: Tam Otonom mod aktif! Sistem insan onayı olmadan al-sat yapacak.');
+      } else {
+        document.getElementById('btnModeSim').className = 'px-3 py-1.5 rounded-lg font-medium transition-all duration-200 bg-amber-600 text-white shadow';
+        showToast('Sanal İşlem (Paper Trading) moduna geçildi. Gerçek bakiye kullanılmaz.');
+      }
+    }
+
+    function triggerAIScan() {
+      const btn = document.getElementById('btnScanAI');
+      const originalText = btn.innerHTML;
+      btn.innerHTML = `<i class="fa-solid fa-spinner fa-spin mr-1"></i> Taranıyor...`;
+      btn.disabled = true;
+
+      setTimeout(() => {
+        btn.innerHTML = originalText;
+        btn.disabled = false;
+        showToast('AI Taraması Tamamlandı: 4 Ajan uzlaştı, 1 yeni alım fırsatı yakalandı.');
+        
+        // Add dynamic news and pending approval
+        newsItems.unshift({
+          id: Date.now(),
+          time: 'Şimdi',
+          source: 'Yapay Zeka Taraması',
+          title: 'ASELS 62 TL Direncinde Hacim Patlaması Tespit Edildi',
+          summary: 'Teknik ve haber analizi eşleşti. İndikatörler pozitif yönlü kırılım sinyali veriyor.',
+          score: +8.4,
+          sentiment: 'positive',
+          affected: 'ASELS'
+        });
+        renderNewsFeed();
+      }, 1500);
+    }
+
+    function filterAssetTable(type) {
+      renderAssets(type);
+    }
+
+    function triggerQuickTrade(symbol) {
+      showToast(`${symbol} için anlık derinlik ve bilanço analizi oluşturuluyor...`);
+    }
+
+    function openAddAssetModal() {
+      document.getElementById('addAssetModal').classList.remove('hidden');
+    }
+    function closeAddAssetModal() {
+      document.getElementById('addAssetModal').classList.add('hidden');
+    }
+
+    function openPendingApprovalModal() {
+      document.getElementById('pendingApprovalModal').classList.remove('hidden');
+    }
+    function closePendingApprovalModal() {
+      document.getElementById('pendingApprovalModal').classList.add('hidden');
+    }
+
+    function openSettingsModal() {
+      document.getElementById('settingsModal').classList.remove('hidden');
+    }
+    function closeSettingsModal() {
+      document.getElementById('settingsModal').classList.add('hidden');
+    }
+
+    function saveNewAsset() {
+      const sym = document.getElementById('inputAssetSymbol').value.trim().toUpperCase();
+      const type = document.getElementById('inputAssetType').value;
+      const qty = parseFloat(document.getElementById('inputAssetQty').value) || 0;
+      const price = parseFloat(document.getElementById('inputAssetPrice').value) || 100.0;
+
+      if (!sym) {
+        showToast('Lütfen geçerli bir hisse veya fon sembolü girin.');
+        return;
+      }
+
+      assets.push({
+        id: Date.now(),
+        symbol: sym,
+        name: type === 'bist' ? `${sym} Sanayi ve Ticaret A.Ş.` : `${sym} Portföy Yönetim Fonu`,
+        type: type,
+        buyPrice: price,
+        currentPrice: price * 1.01,
+        qty: qty,
+        aiScore: 7.5,
+        decision: 'YENİ İZLİYOR',
+        reason: 'Kullanıcı tarafından izlemeye alındı, veri toplanıyor'
+      });
+
+      renderAssets();
+      closeAddAssetModal();
+      showToast(`${sym} başarıyla takip havuzuna eklendi! Ajanlar analiz etmeye başladı.`);
+    }
+
+    function exportOrdersCSV() {
+      let csvContent = "data:text/csv;charset=utf-8,Tarih,Varlık,İşlem,Fiyat,Tutar,Gerekçe,Durum\n";
+      ordersLog.forEach(row => {
+        csvContent += `"${row.date}","${row.symbol}","${row.type}","${row.price}","${row.total}","${row.reason}","${row.status}"\n`;
+      });
+      const encodedUri = encodeURI(csvContent);
+      const link = document.createElement("a");
+      link.setAttribute("href", encodedUri);
+      link.setAttribute("download", "BorsaAI_Islem_Gecmisi.csv");
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      showToast('İşlem günlüğü CSV olarak indirildi.');
+    }
+
+    function showToast(message) {
+      const container = document.getElementById('toastContainer');
+      const toast = document.createElement('div');
+      toast.className = 'bg-slate-900/95 text-white border border-emerald-500/40 text-xs px-4 py-3 rounded-xl shadow-2xl flex items-center gap-2.5 transform transition-all duration-300 translate-y-2 opacity-0 font-medium pointer-events-auto';
+      toast.innerHTML = `
+        <i class="fa-solid fa-circle-info text-emerald-400"></i>
+        <span>${message}</span>
+      `;
+      container.appendChild(toast);
+      
+      setTimeout(() => {
+        toast.classList.remove('translate-y-2', 'opacity-0');
+      }, 50);
+
+      setTimeout(() => {
+        toast.classList.add('opacity-0', 'translate-y-2');
+        setTimeout(() => toast.remove(), 300);
+      }, 4000);
+    }
+
+    window.addEventListener('DOMContentLoaded', () => {
+      renderAssets();
+      renderNewsFeed();
+      renderOrders();
+      renderPendingApprovals();
+
+      // Chart.js initialization
+      const ctx = document.getElementById('portfolioTrendChart').getContext('2d');
+      new Chart(ctx, {
+        type: 'line',
+        data: {
+          labels: ['Pazartesi', 'Salı', 'Çarşamba', 'Perşembe', 'Cuma', 'Pazartesi (Bugün)'],
+          datasets: [
+            {
+              label: 'BIST Hisseleri (₺)',
+              data: [230000, 234500, 232000, 241000, 246500, 252100],
+              borderColor: '#10b981',
+              backgroundColor: 'rgba(16, 185, 129, 0.08)',
+              borderWidth: 2.5,
+              tension: 0.35,
+              fill: true
+            },
+            {
+              label: 'TEFAS Fonları (₺)',
+              data: [120000, 122000, 123500, 126000, 129000, 132150],
+              borderColor: '#38bdf8',
+              backgroundColor: 'rgba(56, 189, 248, 0.05)',
+              borderWidth: 2,
+              borderDash: [4, 4],
+              tension: 0.25,
+              fill: true
+            }
+          ]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: {
+            legend: {
+              labels: {
+                color: '#94a3b8',
+                font: { size: 11, family: 'Plus Jakarta Sans' }
+              }
+            },
+            tooltip: {
+              backgroundColor: '#0f172a',
+              titleColor: '#f8fafc',
+              bodyColor: '#38bdf8',
+              borderColor: '#334155',
+              borderWidth: 1
+            }
+          },
+          scales: {
+            x: {
+              grid: { color: 'rgba(255, 255, 255, 0.05)' },
+              ticks: { color: '#64748b', font: { size: 10 } }
+            },
+            y: {
+              grid: { color: 'rgba(255, 255, 255, 0.05)' },
+              ticks: { 
+                color: '#64748b', 
+                font: { size: 10 },
+                callback: function(val) { return '₺' + (val/1000) + 'k'; }
+              }
+            }
+          }
+        }
+      });
+    });
+  </script>
+</body>
+</html>
